@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 scrape.log
+scrape_quotes.log
