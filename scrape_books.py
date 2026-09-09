@@ -1,6 +1,7 @@
 """books.toscrape.com から書籍タイトル・価格・在庫状況を収集し、Markdownに出力する。"""
 
 import logging
+import os
 import random
 import sys
 import time
@@ -14,9 +15,9 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://books.toscrape.com/"
 USER_AGENT = "books-scraper-practice/1.0 (+https://github.com/shirasaki-coder)"
-MIN_WAIT_SEC = 1.0
-MAX_WAIT_SEC = 3.0
-REQUEST_TIMEOUT = 10
+MIN_WAIT_SEC = float(os.environ.get("BOOKS_MIN_WAIT_SEC", "1.0"))
+MAX_WAIT_SEC = float(os.environ.get("BOOKS_MAX_WAIT_SEC", "3.0"))
+REQUEST_TIMEOUT = int(os.environ.get("BOOKS_REQUEST_TIMEOUT", "10"))
 
 logging.basicConfig(
     level=logging.INFO,

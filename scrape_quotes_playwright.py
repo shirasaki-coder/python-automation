@@ -4,6 +4,7 @@ Markdownと screenshot を出力する。ブラウザは画面表示（headless=
 """
 
 import logging
+import os
 import random
 import sys
 import time
@@ -17,9 +18,10 @@ from playwright.sync_api import sync_playwright, Error as PlaywrightError, Timeo
 BASE_URL = "https://quotes.toscrape.com/"
 TARGET_URL = "https://quotes.toscrape.com/js"
 USER_AGENT = "quotes-scraper-practice/1.0 (+https://github.com/shirasaki-coder)"
-MIN_WAIT_SEC = 1.0
-MAX_WAIT_SEC = 3.0
-PAGE_TIMEOUT_MS = 15000
+MIN_WAIT_SEC = float(os.environ.get("QUOTES_MIN_WAIT_SEC", "1.0"))
+MAX_WAIT_SEC = float(os.environ.get("QUOTES_MAX_WAIT_SEC", "3.0"))
+PAGE_TIMEOUT_MS = int(os.environ.get("QUOTES_PAGE_TIMEOUT_MS", "15000"))
+HEADLESS = os.environ.get("QUOTES_HEADLESS", "false").strip().lower() in ("1", "true", "yes")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,7 +58,7 @@ def scrape_quotes(target_url: str) -> tuple[list[dict], str]:
 
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=False)
+            browser = p.chromium.launch(headless=HEADLESS)
             page = browser.new_page(user_agent=USER_AGENT)
             page.goto(target_url, timeout=PAGE_TIMEOUT_MS, wait_until="networkidle")
             page.wait_for_selector(".quote", timeout=PAGE_TIMEOUT_MS)
